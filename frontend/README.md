@@ -3,14 +3,14 @@
 ## 🛠 기술 스택
 
 - Node v22
-- React + TypeScript
-- Pnpm
-- TanStack Query
-- Emotion
-- Vite
-- Storybook
-- Playwright
-- MSW
+- Pnpm v9
+- React v19
+- TypeScript v5.9
+- Vite v7
+- Emotion v11
+- TanStack Query v5
+- Storybook v10
+- Playwright v1.57
 
 ## 🚀 실행 방법
 
@@ -45,4 +45,3 @@ pnpm preview
 ```bash
 pnpm lint
 ```
-
