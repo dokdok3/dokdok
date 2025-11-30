@@ -42,7 +42,6 @@
     "eslint-plugin-react-refresh": "^0.4.24",
     "eslint-plugin-storybook": "^10.1.2",
     "globals": "^16.5.0",
-    "msw": "^2.12.3",
     "playwright": "^1.57.0",
     "storybook": "^10.1.2",
     "typescript": "~5.9.3",
