@@ -4,6 +4,9 @@ import './index.css'
 import App from './App.tsx'
 import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import theme from './styles/theme.ts';
+import { ThemeProvider } from '@emotion/react';
+import GlobalStyle from './styles/GlobalStyle.tsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,7 +27,10 @@ const queryClient = new QueryClient({
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <App />
+      <ThemeProvider theme={theme}>
+        <GlobalStyle />
+        <App />
+      </ThemeProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   </StrictMode>,
