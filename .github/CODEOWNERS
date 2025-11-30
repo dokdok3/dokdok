@@ -1,0 +1,4 @@
+frontend/ @dokdok3/frontend
+backend/ @dokdok3/backend
+
+.github/ @dokdok3/frontend @dokdok3/backend

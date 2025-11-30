@@ -1,0 +1,14 @@
+🍳 Frontend:
+  - changed-files:
+      - any-glob-to-any-file: 'frontend/**/*'
+🚀 Backend:
+  - changed-files:
+      - any-glob-to-any-file: 'backend/**/*'
+✨ Feature:
+  - head-branch: ['^feat', 'feat']
+🧹 Refactor:
+  - head-branch: ['^refactor', 'refactor']
+🐛 Bug Report:
+  - head-branch: ['^hotfix', 'hotfix', '^fix', 'fix']
+🛫 Release:
+  - base-branch: 'main'
