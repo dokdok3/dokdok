@@ -6,5 +6,3 @@ export const PATH = {
   EXCEPTION: '/*',
   LOADING: '/loading',
 } as const;
-
-

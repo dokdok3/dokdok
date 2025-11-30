@@ -1,5 +1,7 @@
-import App from '@/App';
 import { createBrowserRouter } from 'react-router-dom';
+
+import App from '@/App';
+
 import { BASE_URL, PATH } from './path';
 
 export const router = createBrowserRouter(
