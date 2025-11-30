@@ -2,7 +2,7 @@
 
 ## 🛠 기술 스택
 
-- Node v24.11.1 (LTS)
+- Node v22
 - React + TypeScript
 - Pnpm
 - TanStack Query
