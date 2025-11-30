@@ -1,4 +1,0 @@
-frontend:
-  - '@dokdok3/frontend'
-backend:
-  - '@dokdok3/backend'
