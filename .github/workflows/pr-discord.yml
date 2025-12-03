@@ -1,0 +1,83 @@
+name: PR Notify Discord
+
+on:
+  pull_request:
+    types: [opened, closed]
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Determine event type
+        id: check
+        run: |
+          EVENT="${{ github.event_name }}"
+          ACTION="none"
+
+          if [ "$EVENT" = "pull_request" ]; then
+            if [ "${{ github.event.action }}" = "opened" ]; then
+              ACTION="opened"
+            elif [ "${{ github.event.action }}" = "closed" ] && [ "${{ github.event.pull_request.merged }}" = "true" ]; then
+              ACTION="merged"
+            fi
+          elif [ "$EVENT" = "pull_request_review" ]; then
+            if [ "${{ github.event.review.state }}" = "approved" ]; then
+              ACTION="approved"
+            fi
+          fi
+
+          echo "action=$ACTION" >> $GITHUB_OUTPUT
+
+      - name: Stop if no matching action
+        if: steps.check.outputs.action == 'none'
+        run: echo "No notification needed."
+
+      - name: Send Discord Embed
+        if: steps.check.outputs.action != 'none'
+        run: |
+          ACTION="${{ steps.check.outputs.action }}"
+          WEBHOOK="${{ secrets.DISCORD_WEBHOOK }}"
+
+          # UI Styles
+          if [ "$ACTION" = "opened" ]; then
+            ICON="👀"
+            COLOR=3447003   # blue
+            TITLE="Pull Request Opened"
+            DESCRIPTION="A new pull request has been created."
+            REVIEWER=""
+          elif [ "$ACTION" = "approved" ]; then
+            ICON="☑️"
+            COLOR=5763719   # green
+            TITLE="Pull Request Approved"
+            DESCRIPTION="The pull request has been approved."
+            REVIEWER="Approved by: **${{ github.event.review.user.login }}**"
+          elif [ "$ACTION" = "merged" ]; then
+            ICON="🎉"
+            COLOR=10181046  # purple
+            TITLE="Pull Request Merged"
+            DESCRIPTION="The pull request has been successfully merged."
+            REVIEWER=""
+          fi
+
+          MENTION="@here"
+
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d "{
+              \"content\": \"$MENTION\",
+              \"embeds\": [{
+                \"title\": \"$ICON $TITLE\",
+                \"description\": \"$DESCRIPTION\",
+                \"color\": $COLOR,
+                \"fields\": [
+                  { \"name\": \"Title\", \"value\": \"${{ github.event.pull_request.title }}\" },
+                  { \"name\": \"Author\", \"value\": \"${{ github.event.pull_request.user.login }}\" }
+                  $([ -n \"$REVIEWER\" ] && echo ", { \"name\": \"Reviewer\", \"value\": \"$REVIEWER\" }")
+                ],
+                \"url\": \"${{ github.event.pull_request.html_url }}\"
+              }]
+            }" \
+            "$WEBHOOK"
