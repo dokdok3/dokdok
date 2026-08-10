@@ -8,7 +8,8 @@
 - [`feature-requirements.md`](./feature-requirements.md) — 페이지별 기능요구사항 (화주/기사 화면, API, 엣지케이스)
 - [`team-timeline.md`](./team-timeline.md) — 본선 당일(09:00~18:00) 팀 배치·시간표
 - [`discord-share.md`](./discord-share.md) — 팀 공유용 요약본
-- [`wireframe-notes.md`](./wireframe-notes.md) — 화주/기사 페이지 와이어프레임 회의 요약 (wireframe.html은 별도 추가 예정)
+- [`wireframe.html`](./wireframe.html) — 화주/기사 페이지 와이어프레임 (브라우저로 열어서 확인, 탭 전환 가능)
+- [`wireframe-notes.md`](./wireframe-notes.md) — 와이어프레임 회의 요약
 
 ## 주제 선정 과정
 
