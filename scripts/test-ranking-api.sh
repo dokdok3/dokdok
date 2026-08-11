@@ -36,11 +36,11 @@ request "6) 변경된 활동 지역의 추천 화물 첫 페이지" \
 
 request "7) 첫 화물 수락" \
   --request POST \
-  "$API_BASE_URL/api/offers/freight-01/accept?driverId=driver-01"
+  "$API_BASE_URL/api/offers/freight-001/accept?driverId=driver-01"
 
 request "8) 두 번째 화물 숨기기" \
   --request POST \
-  "$API_BASE_URL/api/offers/freight-02/hide?driverId=driver-01"
+  "$API_BASE_URL/api/offers/freight-002/hide?driverId=driver-01"
 
 request "9) 숨김 처리 후 첫 페이지 재조회" \
   "$API_BASE_URL/api/offers?driverId=driver-01&page=0&size=20"

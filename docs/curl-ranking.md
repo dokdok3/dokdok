@@ -50,6 +50,6 @@ curl --fail-with-body --silent \
   'http://localhost:8080/api/offers?driverId=driver-01&page=0&size=20'
 ```
 
-`driver-01`에는 총 27건의 적격 mock 화물이 있다. 첫 응답은 `content` 20개, `totalElements: 27`, `totalPages: 2`, `hasNext: true`를 반환하며, 두 번째 페이지의 첫 결과는 전체 `rank: 21`이다.
+500건 seed에서 `driver-01`에는 총 109건의 적격 mock 화물이 있다. 첫 응답은 `content` 20개, `totalElements: 109`, `totalPages: 6`, `hasNext: true`를 반환하며, 두 번째 페이지의 첫 결과는 전체 `rank: 21`이다. 숨김 처리 후에는 적격 건수가 1건 감소한다.
 
 `size`는 1~20만 가능하다. 예를 들어 `size=21`은 `400 Bad Request`가 정상이다.

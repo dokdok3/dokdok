@@ -8,7 +8,8 @@
 - [`feature-requirements.md`](./feature-requirements.md) — 페이지별 기능요구사항 (화주/기사 화면, API, 엣지케이스)
 - [`llm-parsing.md`](./llm-parsing.md) — OpenAI Responses API 기반 화물 요청 파싱 프롬프트·JSON 계약·테스트 케이스
 - [`matching-ranking.md`](./matching-ranking.md) — 기사 활동 지역·최소수락운임 기반 화물/기사 추천 랭킹 규칙
-- [`mock-data.md`](./mock-data.md) — 기사 36명·화물 60건·구간 시세 24건의 데모용 seed 데이터
+- [`mock-data.md`](./mock-data.md) — 기사 36명·화물 500건·구간 시세 24건의 데모용 seed 데이터
+- [`mock-freights.csv`](./mock-freights.csv) — 백엔드 랭킹 API와 동일한 화물 요청 500건 전체 CSV
 - [`curl-ranking.md`](./curl-ranking.md) — mock 랭킹 API 실행·curl 검증 방법
 - [`openai-direct-curl.md`](./openai-direct-curl.md) — mock 기사·시세를 포함한 OpenAI Responses API 직접 curl 테스트
 - [`team-timeline.md`](./team-timeline.md) — 본선 당일(09:00~18:00) 팀 배치·시간표

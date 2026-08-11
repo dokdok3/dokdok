@@ -1,14 +1,18 @@
 package com.dokdok.ranking;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.IntStream;
 
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -38,7 +42,7 @@ public class RankingService {
                 new ActivityRegion("부산광역시", "강서구", "서울특별시", "송파구"),
                 460_000));
 
-        freights = createMockFreights();
+        freights = loadMockFreights();
     }
 
     public ActivityRegion getActivityRegion(String driverId) {
@@ -130,7 +134,7 @@ public class RankingService {
         else if (destinationScore > 0) reasons.add("희망 도착지가 같은 시/도");
         reasons.add("최소수락운임보다 " + fareIncreasePercent(freight.offeredFareKrw(), driver.minimumAcceptFareKrw()) + "% 높은 운임");
 
-        String fareStatus = freight.offeredFareKrw() < freight.averageFareKrw() ? "LOW" : "FAIR";
+        String fareStatus = freight.offeredFareKrw() < Math.round(freight.averageFareKrw() * 0.85) ? "LOW" : "FAIR";
         return new RankedFreight(
                 freight.id(), 0, totalScore, reasons,
                 freight.originSido() + " " + freight.originSigungu(),
@@ -221,30 +225,76 @@ public class RankingService {
         }
     }
 
-    private List<FreightOffer> createMockFreights() {
+    int mockFreightCount() {
+        return freights.size();
+    }
+
+    private List<FreightOffer> loadMockFreights() {
         List<FreightOffer> result = new ArrayList<>();
-        result.add(new FreightOffer("freight-01", "서울특별시", "송파구", "부산광역시", "강서구", "REFRIGERATED", 500_000, 520_000));
-        result.add(new FreightOffer("freight-02", "서울특별시", "송파구", "부산광역시", "사상구", "REFRIGERATED", 480_000, 500_000));
-        result.add(new FreightOffer("freight-03", "서울특별시", "강동구", "부산광역시", "강서구", "REFRIGERATED", 550_000, 540_000));
+        ClassPathResource resource = new ClassPathResource("mock/mock-freights.csv");
 
-        String[] originDistricts = {"송파구", "강동구", "강남구", "마포구", "수원시"};
-        String[] destinationDistricts = {"강서구", "사상구", "해운대구", "수영구", "수원시"};
-        IntStream.rangeClosed(4, 27).forEach(number -> {
-            String originDistrict = originDistricts[(number - 4) % originDistricts.length];
-            String destinationDistrict = destinationDistricts[(number - 4) % destinationDistricts.length];
-            String originSido = originDistrict.equals("수원시") ? "경기도" : "서울특별시";
-            String destinationSido = destinationDistrict.equals("수원시") ? "경기도" : "부산광역시";
-            String cargoType = number % 3 == 0 ? "GENERAL" : "REFRIGERATED";
-            long offeredFare = 430_000L + (number % 6) * 20_000L;
-            result.add(new FreightOffer(
-                    "freight-%02d".formatted(number), originSido, originDistrict,
-                    destinationSido, destinationDistrict, cargoType, offeredFare, 500_000));
-        });
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8))) {
+            reader.readLine();
+            String line;
+            int lineNumber = 1;
+            while ((line = reader.readLine()) != null) {
+                lineNumber++;
+                if (line.isBlank()) continue;
+                String[] columns = line.split(",", -1);
+                if (columns.length != 12) {
+                    throw new IllegalStateException("invalid mock freight CSV at line " + lineNumber);
+                }
+                long offeredFare = Long.parseLong(columns[8]);
+                long averageFare = averageFareFor(
+                        columns[3], columns[4], columns[5], columns[6], columns[1], offeredFare);
+                result.add(new FreightOffer(
+                        columns[0], columns[3], columns[4], columns[5], columns[6],
+                        columns[1], offeredFare, averageFare));
+            }
+        } catch (IOException | NumberFormatException exception) {
+            throw new IllegalStateException("failed to load mock freight CSV", exception);
+        }
 
-        result.add(new FreightOffer("freight-low-fare", "서울특별시", "송파구", "부산광역시", "강서구", "REFRIGERATED", 380_000, 520_000));
-        result.add(new FreightOffer("freight-frozen", "서울특별시", "송파구", "부산광역시", "강서구", "FROZEN", 550_000, 520_000));
+        if (result.size() != 500) {
+            throw new IllegalStateException("mock freight CSV must contain exactly 500 rows: " + result.size());
+        }
         return List.copyOf(result);
     }
+
+    private long averageFareFor(
+            String originSido, String originSigungu,
+            String destinationSido, String destinationSigungu,
+            String cargoType, long fallback) {
+        String key = String.join("|", originSido, originSigungu, destinationSido, destinationSigungu, cargoType);
+        return AVERAGE_FARES.getOrDefault(key, fallback);
+    }
+
+    private static final Map<String, Long> AVERAGE_FARES = Map.ofEntries(
+            Map.entry("서울특별시|송파구|부산광역시|강서구|REFRIGERATED", 720_000L),
+            Map.entry("서울특별시|송파구|부산광역시|강서구|GENERAL", 680_000L),
+            Map.entry("서울특별시|강동구|부산광역시|강서구|GENERAL", 660_000L),
+            Map.entry("서울특별시|강동구|부산광역시|해운대구|REFRIGERATED", 700_000L),
+            Map.entry("서울특별시|강남구|부산광역시|해운대구|FROZEN", 760_000L),
+            Map.entry("서울특별시|마포구|인천광역시|부평구|GENERAL", 160_000L),
+            Map.entry("경기도|수원시|서울특별시|송파구|GENERAL", 350_000L),
+            Map.entry("경기도|화성시|충청남도|당진시|CONSTRUCTION", 320_000L),
+            Map.entry("인천광역시|서구|대전광역시|유성구|GENERAL", 380_000L),
+            Map.entry("경기도|평택시|부산광역시|사상구|REFRIGERATED", 650_000L),
+            Map.entry("대전광역시|유성구|경기도|수원시|GENERAL", 410_000L),
+            Map.entry("울산광역시|남구|대구광역시|달서구|GENERAL", 300_000L),
+            Map.entry("대구광역시|달서구|경상북도|포항시|REFRIGERATED", 280_000L),
+            Map.entry("경상남도|창원시|부산광역시|강서구|GENERAL", 250_000L),
+            Map.entry("강원특별자치도|원주시|서울특별시|강남구|FROZEN", 360_000L),
+            Map.entry("충청북도|청주시|세종특별자치시|세종시|CONSTRUCTION", 230_000L),
+            Map.entry("충청남도|천안시|서울특별시|송파구|GENERAL", 330_000L),
+            Map.entry("인천광역시|중구|울산광역시|남구|HAZARDOUS", 720_000L),
+            Map.entry("전라북도|전주시|대전광역시|유성구|GENERAL", 300_000L),
+            Map.entry("광주광역시|광산구|전라남도|여수시|GENERAL", 320_000L),
+            Map.entry("전라남도|순천시|광주광역시|북구|GENERAL", 270_000L),
+            Map.entry("경상북도|구미시|대구광역시|북구|GENERAL", 240_000L),
+            Map.entry("세종특별자치시|세종시|충청남도|아산시|GENERAL", 230_000L),
+            Map.entry("부산광역시|사상구|경상남도|김해시|REFRIGERATED", 250_000L));
 
     private boolean same(String first, String second) {
         return first != null && first.equals(second);

@@ -51,9 +51,14 @@ driver-35,양준호,"GENERAL",부산광역시,해운대구,부산광역시,해�
 driver-36,도하진,"GENERAL|REFRIGERATED",경기도,용인시,경기도,용인시,대전광역시,서구,300000,4.8,98,용인-대전,05:00-20:00
 ```
 
-## 2. 화물 요청 60건
+## 2. 화물 요청 500건
 
+전체 500건은 [`mock-freights.csv`](./mock-freights.csv)에 있다. 같은 파일을 백엔드의
+`src/main/resources/mock/mock-freights.csv`에도 두어 실제 랭킹 API seed로 사용한다.
 `status`는 초기값이며, 기사별 수락·숨김 상태는 별도로 관리한다.
+
+아래에는 사람이 검토하기 쉬운 핵심 시나리오 60건만 인라인으로 남겼다. 61~500번은
+`scripts/generate-mock-freights.mjs`가 여러 지역·화물 유형·운임 구간을 조합해 결정적으로 생성한다.
 
 ```csv
 id,cargoType,cargoDescription,originSido,originSigungu,destinationSido,destinationSigungu,weightTon,offeredFareKrw,loadingAt,unloadingAt,status
