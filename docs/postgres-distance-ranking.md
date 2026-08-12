@@ -87,7 +87,10 @@ WHERE driver_id = :driverId;
 ### 기존 500건 CSV에 좌표 넣기
 
 현재 [`mock-freights.csv`](./mock-freights.csv)는 시·도와 시·군·구만 있으므로 바로 거리 계산을
-할 수 없다. 본선 seed에는 사용하는 행정구역별 대표 좌표를 한 번만 준비한다.
+할 수 없다. [`korea-admin-area-coordinates.csv`](./korea-admin-area-coordinates.csv)에
+2026-08-13 기준 시도 16개와 시군구 269개(최하위 256개)의 검증된 WGS84 대표 좌표를 준비했다.
+산출 기준과 전체 적재 SQL은 [`korea-admin-area-coordinates.md`](./korea-admin-area-coordinates.md)를
+따른다.
 
 ```sql
 CREATE TABLE region_coordinate (
@@ -97,12 +100,11 @@ CREATE TABLE region_coordinate (
     PRIMARY KEY (sido, sigungu)
 );
 
--- 예시 좌표일 뿐이며 확정 seed에서는 사용하는 지도/지오코딩 결과로 검증한다.
 INSERT INTO region_coordinate (sido, sigungu, location)
 VALUES (
     '서울특별시',
     '송파구',
-    ST_SetSRID(ST_MakePoint(127.1059, 37.5145), 4326)::geography
+    ST_SetSRID(ST_MakePoint(127.1058583, 37.5048645), 4326)::geography
 );
 ```
 

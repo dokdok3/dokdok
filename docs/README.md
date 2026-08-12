@@ -10,6 +10,8 @@
 - [`matching-ranking.md`](./matching-ranking.md) — 기사 활동 지역·최소수락운임 기반 화물/기사 추천 랭킹 규칙
 - [`ai-route-ranking.md`](./ai-route-ranking.md) — PostGIS 후보 50건을 기사 자연어 선호로 AI 재랭킹하는 하이브리드 설계
 - [`postgres-distance-ranking.md`](./postgres-distance-ranking.md) — PostgreSQL/PostGIS 좌표 스키마·공간 인덱스·거리 점수 SQL
+- [`korea-admin-area-coordinates.md`](./korea-admin-area-coordinates.md) — 2026-08-13 기준 시도 16개·시군구 269개 대표 좌표와 PostGIS 적재법
+- [`korea-admin-area-coordinates.csv`](./korea-admin-area-coordinates.csv) — WGS84 행정구역 대표 좌표 285행 seed
 - [`mock-data.md`](./mock-data.md) — 기사 36명·화물 500건·구간 시세 24건의 데모용 seed 데이터
 - [`mock-freights.csv`](./mock-freights.csv) — 백엔드 랭킹 API와 동일한 화물 요청 500건 전체 CSV
 - [`curl-ranking.md`](./curl-ranking.md) — mock 랭킹 API 실행·curl 검증 방법
