@@ -8,6 +8,8 @@
 - [`feature-requirements.md`](./feature-requirements.md) — 페이지별 기능요구사항 (화주/기사 화면, API, 엣지케이스)
 - [`llm-parsing.md`](./llm-parsing.md) — OpenAI Responses API 기반 화물 요청 파싱 프롬프트·JSON 계약·테스트 케이스
 - [`matching-ranking.md`](./matching-ranking.md) — 기사 활동 지역·최소수락운임 기반 화물/기사 추천 랭킹 규칙
+- [`ai-route-ranking.md`](./ai-route-ranking.md) — PostGIS 후보 50건을 기사 자연어 선호로 AI 재랭킹하는 하이브리드 설계
+- [`postgres-distance-ranking.md`](./postgres-distance-ranking.md) — PostgreSQL/PostGIS 좌표 스키마·공간 인덱스·거리 점수 SQL
 - [`mock-data.md`](./mock-data.md) — 기사 36명·화물 500건·구간 시세 24건의 데모용 seed 데이터
 - [`mock-freights.csv`](./mock-freights.csv) — 백엔드 랭킹 API와 동일한 화물 요청 500건 전체 CSV
 - [`curl-ranking.md`](./curl-ranking.md) — mock 랭킹 API 실행·curl 검증 방법
