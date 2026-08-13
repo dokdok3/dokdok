@@ -45,3 +45,22 @@ pnpm preview
 ```bash
 pnpm lint
 ```
+
+### Storybook
+
+```bash
+pnpm storybook
+pnpm build-storybook
+pnpm test
+```
+
+`pnpm test`는 Chromium에서 Storybook interaction/a11y 테스트를 실행한다.
+
+### Playwright E2E
+
+최초 한 번 Chromium을 설치한다.
+
+```bash
+pnpm exec playwright install chromium
+pnpm test:e2e
+```

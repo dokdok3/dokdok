@@ -387,27 +387,22 @@ unset GHCR_TOKEN
 명령 기록이나 터미널 공유 화면에 실제 토큰이 남지 않도록 직접 입력하거나 안전한 secret
 전달 방식을 사용한다.
 
-## 10. CI/CD 활성화 전 현재 저장소 점검
+## 10. 현재 저장소 상태
 
-2026-08-13 현재 workflow를 바로 활성화할 수 없는 항목이 있다.
+2026-08-13 기준 프로젝트 디렉터리는 다음까지 준비되어 있다.
 
-| 현재 상태 | 목표/필수 작업 |
+| 항목 | 상태 |
 |---|---|
-| `backend/build.gradle.kts`: Spring Boot `4.0.0` | 팀 합의가 3.x라면 사용할 3.x 버전으로 통일 |
-| MySQL runtime driver | `org.postgresql:postgresql` 드라이버로 교체 |
-| DataSource/JPA 자동설정 제외 | PostgreSQL 연결 구현 시 제외 설정 제거 |
-| Actuator 의존성 없음 | `spring-boot-starter-actuator` 추가 후 health endpoint 노출 |
-| backend/frontend Dockerfile 없음 | 아래 예시를 기준으로 각각 추가 |
-| 프론트 테스트 script 없음 | 최소 `lint`와 `build`를 CI gate로 사용하거나 Vitest script 추가 |
-| `backend/gradlew` 실행 비트 없음 | `git update-index --chmod=+x backend/gradlew`로 저장소에 반영 |
-| frontend build 실패 | `src/stories/Button.tsx`, `Header.tsx`의 사용하지 않는 `React` import 제거 |
+| 백엔드 | Java 25, Spring Boot 3.5.16, PostgreSQL driver, Hibernate Spatial, Actuator |
+| 프론트엔드 | Node 22, pnpm 9, React 19, TypeScript 5.9, Vite 7, Emotion 11, TanStack Query 5 |
+| UI·브라우저 테스트 | Storybook 10, Vitest browser, Playwright 1.57 smoke test |
+| 로컬 DB | 루트 `compose.yaml`의 `postgis/postgis:17-3.5` |
+| 컨테이너 이미지 | backend/frontend Dockerfile은 아직 없음 |
+| CI/CD | 이 문서의 예시만 있으며 workflow는 활성화하지 않음 |
 
-이 문서의 workflow는 위 항목을 끝낸 후 `.github/workflows/ci-cd.yml`로 활성화한다. 기존
-`issue-label.yml`, `pr-label.yml`, `pr-discord.yml`과는 별개이며 삭제하지 않는다.
-
-2026-08-13 로컬 점검 결과 `bash backend/gradlew test --no-daemon`과 frontend lint는
-통과했다. frontend build는 위 두 Storybook 파일의 TypeScript `TS6133` 오류로 실패했다. 즉,
-현재는 문서 예제만 추가한 상태이며 실패하는 workflow를 저장소에 활성화하지 않았다.
+로컬 검증에서는 backend test, frontend lint/build, Storybook build·browser test, Playwright E2E가
+통과했다. 실제 CI/CD 구축 요청이 있을 때 Dockerfile을 추가하고 아래 workflow 예시를 별도
+검증한 후 활성화한다. 기존 `issue-label.yml`, `pr-label.yml`, `pr-discord.yml`은 유지한다.
 
 ## 11. 백엔드 Dockerfile
 
